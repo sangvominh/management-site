@@ -6,7 +6,7 @@ import Dashboard from "./pages/dashboard/Dashboard";
 import Create from "./pages/create/Create";
 import Login from "./pages/login/Login";
 import Project from "./pages/project/Project";
-import Signup from "./pages/Signup/Signup";
+import Signup from "./pages/signup/Signup";
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
 
