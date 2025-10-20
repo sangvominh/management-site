@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useLogout } from "../hooks/useLogout";
+import { useAuthContext } from "../hooks/useAuthContext";
 
 // styles
 import "./Navbar.css";
@@ -12,7 +13,8 @@ import Login from "../pages/login/Login";
 import Signup from "../pages/signup/Signup";
 
 export default function Navbar() {
-  const {isPending, error, logout} = useLogout();
+  const { isPending, error, logout } = useLogout();
+  const { user } = useAuthContext();
 
   return (
     <div className="navbar">
@@ -21,28 +23,35 @@ export default function Navbar() {
           <img src={temple} alt="manage site logo" />
         </li>
 
-        <li>
-          <Link to="/login" element={<Login />}>
-            Login
-          </Link>
-        </li>
-        <li>
-          <Link to="/signup" element={<Signup />}>
-            Signup
-          </Link>
-        </li>
-        <li>
-          {!isPending && (
-            <button className="btn" onClick={logout}>
-              Log out
-            </button>
-          )}
-          {isPending && (
-            <button className="btn" onClick={logout}>
-              Logging out ...
-            </button>
-          )}
-        </li>
+        {!user && (
+          <>
+            <li>
+              <Link to="/login" element={<Login />}>
+                Login
+              </Link>
+            </li>
+            <li>
+              <Link to="/signup" element={<Signup />}>
+                Signup
+              </Link>
+            </li>
+          </>
+        )}
+        {user && (
+          <li>
+            {!isPending && (
+              <button className="btn" onClick={logout}>
+                Logout
+              </button>
+            )}
+            {isPending && (
+              <button className="btn" onClick={logout}>
+                Logging out ...
+              </button>
+            )}
+            {error && <div>{error}</div>}
+          </li>
+        )}
       </ul>
     </div>
   );
