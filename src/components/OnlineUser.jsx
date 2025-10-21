@@ -13,7 +13,6 @@ export default function OnlineUser() {
         <div key={user.id} className="user-list-item">
           {user.online && <span className="online-user"></span>}
           <span>{user.displayName}</span>
-          {user.online && <span> online</span>}
         </div>
       ))}
     </div>
