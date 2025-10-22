@@ -1,10 +1,17 @@
 // styles
-import './Dashboard.css'
+import "./Dashboard.css";
+
+import { useCollection } from "../../hooks/useCollection";
+import ProjectList from "../../components/ProjectList";
 
 export default function Dashboard() {
+  const { documents, error, isPending } = useCollection("projects");
+  if(isPending) return <div className="loading">Loading projects ...</div>
   return (
     <div>
-      Dashboard
+      <h2 className="page-title">Dashboard</h2>
+      {error && <p className="error">{error}</p>}
+      {documents && <ProjectList projects={documents} />}
     </div>
-  )
+  );
 }
