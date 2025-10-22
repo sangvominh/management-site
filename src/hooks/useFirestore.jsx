@@ -1,5 +1,5 @@
 import { useEffect, useReducer, useState } from "react";
-import { projectFirestore, timestamp } from "../firebase/config";
+import { projectFirestore } from "../firebase/config";
 
 let initialState = {
   document: null,
@@ -13,11 +13,13 @@ const firestoreReducer = (state, action) => {
     case "PENDING":
       return { isPending: true, error: null, document: null, success: null };
     case "ERROR":
-      return { document: null, error: action.payload, isPending: false, success: false };
+      return { document: null, success: false, error: action.payload, isPending: false };
     case "ADD_DOCUMENT":
       return { document: action.payload, success: true, error: false, isPending: false };
     case "DELETE_DOCUMENT":
       return { document: null, success: true, error: false, isPending: false };
+    case "UPDATE_DOCUMENT":
+      return { document: action.payload, success: true, error: false, isPending: false };
     default:
       return state;
   }
@@ -36,21 +38,20 @@ export const useFirestore = (collection) => {
     }
   };
 
-  // add transaction
-  const addTransaction = async (doc) => {
+  // add document
+  const addDocument = async (doc) => {
     dispatch({ type: "PENDING" });
 
     try {
-      const createAt = timestamp.fromDate(new Date());
-      const document = await ref.add({ ...doc, createAt });
+      const document = await ref.add({ ...doc });
       dispatchIfNotCanceled({ type: "ADD_DOCUMENT", payload: document });
     } catch (err) {
-      dispatchIfNotCanceled({ type: "ERROR", payload: "could not add" });
+      dispatchIfNotCanceled({ type: "ERROR", payload: `could not add ${err}` });
     }
   };
 
-  // delete transaction
-  const deleteTransaction = async (id) => {
+  // delete document
+  const deleteDocument = async (id) => {
     dispatch({ type: "PENDING" });
 
     try {
@@ -61,9 +62,23 @@ export const useFirestore = (collection) => {
     }
   };
 
+  // update document
+  const updateDocument = async (id, updates) => {
+    dispatch({ type: "PENDING" });
+
+    try {
+      const updateDocument = ref.doc(id).update(updates);
+      dispatchIfNotCanceled({ type: "UPDATE_DOCUMENT", payload: updateDocument });
+      return updateDocument;
+    } catch (err) {
+      dispatchIfNotCanceled({ type: "ERROR", payload: "could not delete" + err });
+      return null;
+    }
+  };
+
   useEffect(() => {
     return () => setIsCancelled(true);
   }, []);
 
-  return { addTransaction, deleteTransaction, response };
+  return { addDocument, deleteDocument, updateDocument, response };
 };
