@@ -1,20 +1,22 @@
-import { NavLink } from "react-router-dom"
+import { Link, NavLink } from "react-router-dom";
 
 // styles & images
-import "./Sidebar.css"
-import DashboardIcon from '../assets/dashboard_icon.svg'
-import AddIcon from '../assets/add_icon.svg'
-import { useAuthContext } from "../hooks/useAuthContext"
+import "./Sidebar.css";
+import DashboardIcon from "../assets/dashboard_icon.svg";
+import AddIcon from "../assets/add_icon.svg";
+import { useAuthContext } from "../hooks/useAuthContext";
 
 export default function Sidebar() {
-  const {user} = useAuthContext()
+  const { user } = useAuthContext();
 
   return (
     <div className="sidebar">
       <div className="sidebar-content">
-        <div className="user">
-          <p>Hey user {user.displayName}</p>  
-        </div>  
+        <Link to={'/'}>
+          <div className="user">
+            <p>Hey user {user.displayName}</p>
+          </div>{" "}
+        </Link>
         <nav className="links">
           <ul>
             <li>
@@ -33,5 +35,5 @@ export default function Sidebar() {
         </nav>
       </div>
     </div>
-  )
+  );
 }
