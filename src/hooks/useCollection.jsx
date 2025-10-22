@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { projectFirestore } from "../firebase/config";
 
 export const useCollection = (collection, _query, _orderBy) => {
+  const [isPending, setIsPending] = useState(false)
   const [documents, setDocuments] = useState();
   const [error, setError] = useState();
 
@@ -9,6 +10,8 @@ export const useCollection = (collection, _query, _orderBy) => {
   const orderBy = useRef(_orderBy).current
 
   useEffect(() => {
+    setIsPending(true)
+
     let ref = projectFirestore.collection(collection)
 
     if(query){
@@ -29,6 +32,7 @@ export const useCollection = (collection, _query, _orderBy) => {
         // update documents state
         setDocuments(results);
         setError(null);
+        setIsPending(false)
       },
       (err) => {
         setError(err.message);
@@ -39,5 +43,5 @@ export const useCollection = (collection, _query, _orderBy) => {
     return () => unsubscribe();
   }, [collection, query, orderBy]);
 
-  return { documents, error };
+  return { documents, error, isPending };
 };
